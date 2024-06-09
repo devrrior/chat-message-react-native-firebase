@@ -6,6 +6,8 @@ import InputField from '../../../../shared/infrastructure/ui/components/InputFie
 import ErrorMessage from '../../../../shared/infrastructure/ui/components/ErrorMessage';
 import {authenticateUseCase} from '../../dependecies';
 import {SignInScreenRouteProp} from '../types/userScreeensRouteProps';
+import {useAppDispatch} from '../../../../shared/infrastructure/redux/store';
+import {AuthActionTypes} from '../../../../shared/infrastructure/redux/actions/authAction';
 
 const SignInScreen = ({navigation}: SignInScreenRouteProp) => {
   const [values, setValues] = useState({
@@ -14,6 +16,7 @@ const SignInScreen = ({navigation}: SignInScreenRouteProp) => {
   });
   const [errors, setErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -43,6 +46,8 @@ const SignInScreen = ({navigation}: SignInScreenRouteProp) => {
       setIsSubmitting(false);
       return;
     }
+
+    dispatch({type: AuthActionTypes.LOGIN, payload: userEntity});
 
     console.log(userEntity);
 

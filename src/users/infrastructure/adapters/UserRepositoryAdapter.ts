@@ -5,7 +5,7 @@ import {
 } from 'firebase/auth';
 import IUserRepositoryPort from '../../application/ports/IUserRepositoryPort';
 import UserEntity from '../../domain/entities/UserEntity';
-import {firebaseAuth, firebaseDB} from '../../../../config/firebase';
+import {firebaseAuth, firebaseDB} from '../../../../config/firebase.config';
 import {doc, getDoc, setDoc} from 'firebase/firestore';
 
 class UserRepositoryAdapter implements IUserRepositoryPort {

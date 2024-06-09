@@ -78,7 +78,9 @@ const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
     <SafeAreaView style={styles.container}>
       <AppBar
         title="Chat UP"
+        titleColor="#ffffff"
         leftIcon="chevron-back"
+        leftIconColor="#ffffff"
         onLeftPress={() => navigation.goBack()}
       />
       <Text style={styles.title}>Registrar Usuario</Text>

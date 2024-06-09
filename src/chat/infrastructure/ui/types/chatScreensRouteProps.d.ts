@@ -9,5 +9,9 @@ type ChatScreenRouteProp = NativeStackScreenProps<
   RootStackParamList,
   'ChatScreen'
 >;
+type NewChatScreenRouteProp = NativeStackScreenProps<
+  RootStackParamList,
+  'NewChatScreen'
+>;
 
-export {ListChatScreenRouteProp, ChatScreenRouteProp};
+export {ListChatScreenRouteProp, ChatScreenRouteProp, NewChatScreenRouteProp};

@@ -68,7 +68,7 @@ const ListChatScreen = ({navigation}: ListChatScreenRouteProp) => {
       />
       <TabBar />
       <ScrollView style={styles.messagesContainer}>{renderChats()}</ScrollView>
-      <FloatingButton onPress={() => console.log('Floating button pressed')} />
+      <FloatingButton onPress={() => navigation.navigate('NewChatScreen')} />
     </SafeAreaView>
   );
 };

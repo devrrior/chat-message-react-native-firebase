@@ -1,5 +1,12 @@
 import {useState} from 'react';
-import {StyleSheet, View, TextInput, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type MessageInputProps = {
@@ -15,17 +22,20 @@ const MessageInput = ({onSend}: MessageInputProps) => {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Type your message..."
-        value={message}
-        onChangeText={setMessage}
-      />
-      <TouchableOpacity onPress={handleSend}>
-        <Icon name="send" size={30} color="#1E68D7" />
-      </TouchableOpacity>
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          placeholder="Escribe tu mensaje..."
+          value={message}
+          onChangeText={setMessage}
+        />
+        <TouchableOpacity onPress={handleSend}>
+          <Icon name="send" size={30} color="#1E68D7" />
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
