@@ -9,31 +9,35 @@ import {firebaseAuth, firebaseDB} from '../../../../config/firebase';
 import {doc, getDoc, setDoc} from 'firebase/firestore';
 
 class UserRepositoryAdapter implements IUserRepositoryPort {
-  async authenticate(user: UserEntity): Promise<UserEntity> {
-    const userCredentials: UserCredential = await signInWithEmailAndPassword(
-      firebaseAuth,
-      user.email,
-      user.password,
-    );
+  async authenticate(user: UserEntity): Promise<UserEntity | null> {
+    try {
+      const userCredentials: UserCredential = await signInWithEmailAndPassword(
+        firebaseAuth,
+        user.email,
+        user.password,
+      );
 
-    const userDoc = await getDoc(
-      doc(firebaseDB, 'users', userCredentials.user.uid),
-    );
+      const userDoc = await getDoc(
+        doc(firebaseDB, 'users', userCredentials.user.uid),
+      );
 
-    if (!userDoc.exists()) {
-      throw new Error('User not found');
+      if (!userDoc.exists()) {
+        throw new Error('User not found');
+      }
+
+      const userData = userDoc.data();
+
+      return new UserEntity(
+        userCredentials.user.uid,
+        userData.firstName,
+        userData.lastName,
+        userData.email,
+        '',
+        userData.providerData,
+      );
+    } catch (error) {
+      return null;
     }
-
-    const userData = userDoc.data();
-
-    return new UserEntity(
-      userCredentials.user.uid,
-      userData.firstName,
-      userData.lastName,
-      userData.email,
-      '',
-      userData.providerData,
-    );
   }
 
   async create(user: UserEntity): Promise<UserEntity> {

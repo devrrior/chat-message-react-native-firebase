@@ -5,7 +5,7 @@ import {useState} from 'react';
 import InputField from '../../../../shared/infrastructure/ui/components/InputField';
 import ErrorMessage from '../../../../shared/infrastructure/ui/components/ErrorMessage';
 import {authenticateUseCase} from '../../dependecies';
-import {SignInScreenRouteProp} from '../types/screeenRouteProps';
+import {SignInScreenRouteProp} from '../types/userScreeensRouteProps';
 
 const SignInScreen = ({navigation}: SignInScreenRouteProp) => {
   const [values, setValues] = useState({
@@ -38,6 +38,12 @@ const SignInScreen = ({navigation}: SignInScreenRouteProp) => {
       values.password,
     );
 
+    if (!userEntity) {
+      setErrors(['Usuario o contraseña incorrectos']);
+      setIsSubmitting(false);
+      return;
+    }
+
     console.log(userEntity);
 
     setErrors(errors);
@@ -68,7 +74,9 @@ const SignInScreen = ({navigation}: SignInScreenRouteProp) => {
       />
       <Text style={styles.linkText}>
         ¿No tienes cuenta?{' '}
-        <Text style={styles.link} onPress={() => navigation.navigate('SignUp')}>
+        <Text
+          style={styles.link}
+          onPress={() => navigation.navigate('SignUpScreen')}>
           Registrate
         </Text>
       </Text>

@@ -1,13 +1,13 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import RootStackParamList from '../../../../shared/infrastructure/ui/types/RootStackParamList';
 
-type SignUpScreenRouteProp = NativeStackScreenProps<
+type ListChatScreenRouteProp = NativeStackScreenProps<
   RootStackParamList,
-  'SignUp'
+  'ListChatScreen'
 >;
-type SignInScreenRouteProp = NativeStackScreenProps<
+type ChatScreenRouteProp = NativeStackScreenProps<
   RootStackParamList,
-  'SignIn'
+  'ChatScreen'
 >;
 
-export {SignUpScreenRouteProp, SignInScreenRouteProp};
+export {ListChatScreenRouteProp, ChatScreenRouteProp};

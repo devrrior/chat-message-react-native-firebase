@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type AppBarProps = {
   title: string;
@@ -21,13 +21,13 @@ const AppBar = ({
     <View style={styles.container}>
       <View style={styles.leftContainer}>
         <TouchableOpacity onPress={onLeftPress}>
-          {leftIcon && <Icon name={leftIcon} size={30} color="white" />}
+          {leftIcon && <Ionicons name={leftIcon} size={30} color="#1E68D7" />}
         </TouchableOpacity>
-        <View style={{width: 15}} />
+        <View style={styles.separator} />
         <Text style={styles.title}>{title}</Text>
       </View>
       <TouchableOpacity onPress={onRightPress}>
-        {rightIcon && <Icon name={rightIcon} size={30} color="white" />}
+        {rightIcon && <Ionicons name={rightIcon} size={30} color="#1E68D7" />}
       </TouchableOpacity>
     </View>
   );
@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: 60,
-    backgroundColor: '#1A73E8',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -51,6 +50,9 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  separator: {
+    width: 15,
   },
 });
 

@@ -11,7 +11,7 @@ import {
   validatePassword,
 } from '../utils/validations';
 import AppBar from '../../../../shared/infrastructure/ui/components/AppBar';
-import {SignUpScreenRouteProp} from '../types/screeenRouteProps';
+import {SignUpScreenRouteProp} from '../types/userScreeensRouteProps';
 
 const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
   const [errors, setErrors] = useState([] as string[]);
@@ -62,7 +62,7 @@ const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
       values.password,
     );
 
-    navigation.navigate('SignIn');
+    navigation.navigate('SignInScreen');
 
     setErrors(validationErrors);
     setIsSubmitting(false);
@@ -78,7 +78,7 @@ const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
     <SafeAreaView style={styles.container}>
       <AppBar
         title="Chat UP"
-        leftIcon="arrow-back"
+        leftIcon="chevron-back"
         onLeftPress={() => navigation.goBack()}
       />
       <Text style={styles.title}>Registrar Usuario</Text>
