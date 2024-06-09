@@ -49,8 +49,6 @@ const SignInScreen = ({navigation}: SignInScreenRouteProp) => {
 
     dispatch({type: AuthActionTypes.LOGIN, payload: userEntity});
 
-    console.log(userEntity);
-
     setErrors(errors);
     setIsSubmitting(false);
   };

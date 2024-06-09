@@ -13,7 +13,7 @@ const initialState: AuthState = {
 
 export const authReducer = (
   state = initialState,
-  action: {type: AuthActionTypes; payload?: UserEntity},
+  action: {type: AuthActionTypes; payload?: UserEntity | null},
 ): AuthState => {
   switch (action.type) {
     case AuthActionTypes.LOGIN:
@@ -26,6 +26,8 @@ export const authReducer = (
         isLoggedIn: false,
         user: null,
       };
+    case AuthActionTypes.GET_USER:
+      return state;
     default:
       return state;
   }

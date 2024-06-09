@@ -3,6 +3,7 @@ import UserEntity from '../../../../users/domain/entities/UserEntity';
 export enum AuthActionTypes {
   LOGIN = 'LOGIN',
   LOGOUT = 'LOGOUT',
+  GET_USER = 'GET_USER',
 }
 
 const login = (user: UserEntity) => ({
@@ -14,4 +15,8 @@ const logout = () => ({
   type: AuthActionTypes.LOGOUT,
 });
 
-export {login, logout};
+const getUser = () => ({
+  type: AuthActionTypes.GET_USER,
+});
+
+export {login, logout, getUser};

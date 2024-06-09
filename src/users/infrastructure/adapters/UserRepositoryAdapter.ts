@@ -6,7 +6,7 @@ import {
 import IUserRepositoryPort from '../../application/ports/IUserRepositoryPort';
 import UserEntity from '../../domain/entities/UserEntity';
 import {firebaseAuth, firebaseDB} from '../../../../config/firebase.config';
-import {doc, getDoc, setDoc} from 'firebase/firestore';
+import {collection, doc, getDoc, getDocs, setDoc} from 'firebase/firestore';
 
 class UserRepositoryAdapter implements IUserRepositoryPort {
   async authenticate(user: UserEntity): Promise<UserEntity | null> {
@@ -48,8 +48,6 @@ class UserRepositoryAdapter implements IUserRepositoryPort {
         user.password,
       );
 
-    console.log(userCredentials.user.providerData[0]);
-
     const userData = {
       _id: userCredentials.user.uid,
       firstName: user.firstName,
@@ -68,6 +66,16 @@ class UserRepositoryAdapter implements IUserRepositoryPort {
       '',
       userCredentials.user.providerData[0],
     );
+  }
+
+  async list(): Promise<UserEntity[]> {
+    const userDocs = await getDocs(collection(firebaseDB, 'users'));
+
+    return userDocs.docs.map(doc => {
+      const data = doc.data();
+
+      return data as UserEntity;
+    });
   }
 }
 

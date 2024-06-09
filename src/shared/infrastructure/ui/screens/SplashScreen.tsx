@@ -30,8 +30,6 @@ const SplashScreen = ({navigation}: SplashScreenRouteProps) => {
             userDoc.get('providerData'),
           );
 
-          console.log('userEntity', userEntity);
-
           dispatch({type: AuthActionTypes.LOGIN, payload: userEntity});
           navigation.navigate('ListChatScreen');
         }
