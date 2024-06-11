@@ -1,16 +1,14 @@
 import {StyleSheet, View, Text, Image} from 'react-native';
 
 type ContactItemTypeProps = {
+  profileImageUrl: string;
   name: string;
 };
 
-const ContactItem = ({name}: ContactItemTypeProps) => {
+const ContactItem = ({name, profileImageUrl}: ContactItemTypeProps) => {
   return (
     <View style={styles.container}>
-      <Image
-        source={{uri: 'https://via.placeholder.com/70'}}
-        style={styles.avatar}
-      />
+      <Image source={{uri: profileImageUrl}} style={styles.avatar} />
       <View style={styles.textContainer}>
         <Text style={styles.name}>{name}</Text>
       </View>

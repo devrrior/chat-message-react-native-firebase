@@ -21,7 +21,7 @@ import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 import MessageImageItem from '../components/MessageImageItem';
 
 const ChatScreen = ({navigation, route}: ChatScreenRouteProp) => {
-  const {chatId, name} = route.params;
+  const {chatId, name, profileImageUrl} = route.params;
 
   const [messages, setMessages] = useState([] as MessageEntity[]);
   const userCredentials = firebaseAuth.currentUser;
@@ -116,7 +116,7 @@ const ChatScreen = ({navigation, route}: ChatScreenRouteProp) => {
   return (
     <SafeAreaView style={styles.container}>
       <ChatAppBar
-        avatar="https://via.placeholder.com/42"
+        avatar={profileImageUrl}
         name={name}
         onBackPress={() => navigation.goBack()}
       />

@@ -1,19 +1,23 @@
 import {StyleSheet, View, Text, Image} from 'react-native';
 
 type ChatItemTypeProps = {
+  profileImageUrl: string;
   name: string;
   message: string;
   datetime: string;
   unread?: number;
 };
 
-const ChatItem = ({name, message, datetime: time, unread}: ChatItemTypeProps) => {
+const ChatItem = ({
+  profileImageUrl,
+  name,
+  message,
+  datetime: time,
+  unread,
+}: ChatItemTypeProps) => {
   return (
     <View style={styles.container}>
-      <Image
-        source={{uri: 'https://via.placeholder.com/70'}}
-        style={styles.avatar}
-      />
+      <Image source={{uri: profileImageUrl}} style={styles.avatar} />
       <View style={styles.textContainer}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.message} numberOfLines={1}>

@@ -38,6 +38,7 @@ class UserRepositoryAdapter implements IUserRepositoryPort {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      profileImageUrl: user.profileImageUrl,
       providerData: userCredentials.user.providerData[0],
     };
 
@@ -49,6 +50,7 @@ class UserRepositoryAdapter implements IUserRepositoryPort {
       user.lastName,
       user.email,
       '',
+      user.profileImageUrl,
       userCredentials.user.providerData[0],
     );
   }
@@ -57,9 +59,9 @@ class UserRepositoryAdapter implements IUserRepositoryPort {
     const snapshots = await getDocs(collection(firebaseDB, 'users'));
 
     return snapshots.docs.map(snapshot => {
-      const data = snapshot.data();
+      const userEntity = UserEntity.fromFirebase(snapshot.data());
 
-      return data as UserEntity;
+      return userEntity;
     });
   }
 
@@ -70,16 +72,9 @@ class UserRepositoryAdapter implements IUserRepositoryPort {
       return null;
     }
 
-    const userData = userDoc.data();
+    const userEntity = UserEntity.fromFirebase(userDoc.data());
 
-    return new UserEntity(
-      userDoc.id,
-      userData.firstName,
-      userData.lastName,
-      userData.email,
-      '',
-      userData.providerData,
-    );
+    return userEntity;
   }
 }
 

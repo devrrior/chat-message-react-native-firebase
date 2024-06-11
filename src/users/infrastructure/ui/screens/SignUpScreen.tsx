@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {StyleSheet, Text} from 'react-native';
+import {Platform, StyleSheet, Text} from 'react-native';
 import InputField from '../../../../shared/infrastructure/ui/components/InputField';
 import Button from '../../../../shared/infrastructure/ui/components/Button';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -12,6 +12,9 @@ import {
 } from '../utils/validations';
 import AppBar from '../../../../shared/infrastructure/ui/components/AppBar';
 import {SignUpScreenRouteProp} from '../types/userScreeensRouteProps';
+import ProfileImageInput from '../../../../shared/infrastructure/ui/components/ProfileImageInput';
+import {firebaseStorage} from '../../../../../config/firebase.config';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 
 const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
   const [errors, setErrors] = useState([] as string[]);
@@ -25,6 +28,7 @@ const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
     email: '',
     password: '',
     confirmPassword: '',
+    profileImageUri: '',
   });
 
   const handleSubmit = async () => {
@@ -55,11 +59,27 @@ const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
       return;
     }
 
+    // uploading image
+    const filename = values.profileImageUri.substring(
+      values.profileImageUri.lastIndexOf('/') + 1,
+    );
+    const storageRef = ref(firebaseStorage, `images/${filename}`);
+    const uploadUri =
+      Platform.OS === 'ios'
+        ? values.profileImageUri.replace('file://', '')
+        : values.profileImageUri;
+
+    const blob = await fetch(uploadUri).then(response => response.blob());
+
+    const snapshot = await uploadBytes(storageRef, blob);
+    const imageProfileUrl = await getDownloadURL(snapshot.ref);
+
     registerUseCase.execute(
       values.firstName,
       values.lastName,
       values.email,
       values.password,
+      imageProfileUrl,
     );
 
     navigation.navigate('SignInScreen');
@@ -84,6 +104,10 @@ const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
         onLeftPress={() => navigation.goBack()}
       />
       <Text style={styles.title}>Registrar Usuario</Text>
+      <ProfileImageInput
+        value={values.profileImageUri}
+        setValue={uri => setValues({...values, profileImageUri: uri})}
+      />
       <InputField
         value={values.firstName}
         handleChange={value => setValues({...values, firstName: value})}

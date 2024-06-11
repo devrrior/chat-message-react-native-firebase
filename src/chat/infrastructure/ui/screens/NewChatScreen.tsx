@@ -50,11 +50,13 @@ const NewChatScreen = ({navigation}: NewChatScreenRouteProp) => {
         senderUser?._id as string,
         senderUser?.firstName as string,
         senderUser?.lastName as string,
+        senderUser?.profileImageUrl as string,
       ),
       new ParticipantEntity(
         receiverUser?._id as string,
         receiverUser?.firstName as string,
         receiverUser?.lastName as string,
+        receiverUser?.profileImageUrl as string,
       ),
     ];
     await createChatUseCase.execute(collaborators);
@@ -63,16 +65,22 @@ const NewChatScreen = ({navigation}: NewChatScreenRouteProp) => {
   };
 
   const renderContacts = () => {
-    return contacts.map(contact => (
-      <TouchableOpacity
-        key={contact._id}
-        onPress={() => onContactPress(contact)}>
-        <ContactItem
-          name={`${contact.firstName} ${contact.lastName}`}
+    return contacts.map(contact => {
+      contact.profileImageUrl =
+        contact.profileImageUrl ||
+        'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg';
+      return (
+        <TouchableOpacity
           key={contact._id}
-        />
-      </TouchableOpacity>
-    ));
+          onPress={() => onContactPress(contact)}>
+          <ContactItem
+            profileImageUrl={contact.profileImageUrl}
+            name={`${contact.firstName} ${contact.lastName}`}
+            key={contact._id}
+          />
+        </TouchableOpacity>
+      );
+    });
   };
   return (
     <SafeAreaView style={styles.container}>

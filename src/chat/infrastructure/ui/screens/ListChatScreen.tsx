@@ -14,8 +14,12 @@ const ListChatScreen = ({navigation}: ListChatScreenRouteProp) => {
   const [chats, setChats] = React.useState([] as ChatEntity[]);
   const userCredentials = firebaseAuth.currentUser;
 
-  const onChatPress = (chatId: string, name: string) => {
-    navigation.navigate('ChatScreen', {name, chatId});
+  const onChatPress = (
+    chatId: string,
+    name: string,
+    profileImageUrl: string,
+  ) => {
+    navigation.navigate('ChatScreen', {name, chatId, profileImageUrl});
   };
 
   useLayoutEffect(() => {
@@ -62,12 +66,17 @@ const ListChatScreen = ({navigation}: ListChatScreenRouteProp) => {
           : 'Sin mensajes aún';
       const datetime = new Date(chat.lastMessage.date);
       const datetimeFinal = `${datetime.getDate()}/${datetime.getMonth()}/${datetime.getFullYear()} ${datetime.getHours()}:${datetime.getMinutes()}`;
+      const profileImageUrl =
+        participants[0].profileImageUrl === ''
+          ? 'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg'
+          : participants[0].profileImageUrl;
 
       return (
         <TouchableOpacity
           key={index}
-          onPress={() => onChatPress(chat._id, chatName)}>
+          onPress={() => onChatPress(chat._id, chatName, profileImageUrl)}>
           <ChatItem
+            profileImageUrl={profileImageUrl}
             name={chatName}
             message={lastMessage}
             datetime={chat.lastMessage.date ? datetimeFinal : ''}

@@ -9,8 +9,17 @@ class RegisterUserUseCase {
     lastName: string,
     email: string,
     password: string,
+    profileImageUrl: string,
   ): Promise<UserEntity> {
-    const user = new UserEntity('', firstName, lastName, email, password, {});
+    const user = new UserEntity(
+      '',
+      firstName,
+      lastName,
+      email,
+      password,
+      profileImageUrl,
+      {},
+    );
 
     return this.userRepository.create(user);
   }

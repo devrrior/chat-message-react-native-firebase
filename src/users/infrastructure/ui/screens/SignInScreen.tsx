@@ -49,6 +49,12 @@ const SignInScreen = ({navigation}: SignInScreenRouteProp) => {
 
     dispatch({type: AuthActionTypes.LOGIN, payload: userEntity});
 
+    const resetValues = {
+      email: '',
+      password: '',
+    };
+
+    setValues(resetValues);
     setErrors(errors);
     setIsSubmitting(false);
   };
