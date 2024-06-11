@@ -12,8 +12,12 @@ import ContactItem from '../components/ContactItem';
 import {useEffect, useState} from 'react';
 import {firebaseAuth} from '../../../../../config/firebase.config';
 import UserEntity from '../../../../users/domain/entities/UserEntity';
-import {listUsersUseCase} from '../../../../users/infrastructure/dependecies';
+import {
+  findUserByIdUseCase,
+  listUsersUseCase,
+} from '../../../../users/infrastructure/dependecies';
 import {createChatUseCase} from '../../dependecies';
+import ParticipantEntity from '../../../domain/entities/ParticipantEntity';
 
 const NewChatScreen = ({navigation}: NewChatScreenRouteProp) => {
   const [contacts, setContacts] = useState([] as UserEntity[]);
@@ -22,7 +26,6 @@ const NewChatScreen = ({navigation}: NewChatScreenRouteProp) => {
   const userCredentials = firebaseAuth.currentUser;
 
   useEffect(() => {
-    console.log('authState', userCredentials);
     const fetchContacts = async () => {
       const data = await listUsersUseCase.execute();
 
@@ -38,7 +41,22 @@ const NewChatScreen = ({navigation}: NewChatScreenRouteProp) => {
   }, [userCredentials]);
 
   const onContactPress = async (contact: UserEntity) => {
-    const collaborators = [userCredentials?.uid!, contact._id];
+    const senderUser = await findUserByIdUseCase.execute(
+      userCredentials?.uid as string,
+    );
+    const receiverUser = await findUserByIdUseCase.execute(contact._id);
+    const collaborators = [
+      new ParticipantEntity(
+        senderUser?._id as string,
+        senderUser?.firstName as string,
+        senderUser?.lastName as string,
+      ),
+      new ParticipantEntity(
+        receiverUser?._id as string,
+        receiverUser?.firstName as string,
+        receiverUser?.lastName as string,
+      ),
+    ];
     await createChatUseCase.execute(collaborators);
 
     navigation.navigate('ListChatScreen');

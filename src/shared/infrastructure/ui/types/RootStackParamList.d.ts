@@ -3,7 +3,7 @@ type RootStackParamList = {
   SignUpScreen: undefined;
   SignInScreen: undefined;
   ListChatScreen: undefined;
-  ChatScreen: {name: string; avatar: string; _id: string};
+  ChatScreen: {name: string; chatId: string};
   NewChatScreen: undefined;
 };
 

@@ -3,11 +3,11 @@ import {StyleSheet, View, Text, Image} from 'react-native';
 type ChatItemTypeProps = {
   name: string;
   message: string;
-  time: string;
+  datetime: string;
   unread?: number;
 };
 
-const ChatItem = ({name, message, time, unread}: ChatItemTypeProps) => {
+const ChatItem = ({name, message, datetime: time, unread}: ChatItemTypeProps) => {
   return (
     <View style={styles.container}>
       <Image

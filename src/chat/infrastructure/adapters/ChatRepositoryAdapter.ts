@@ -2,33 +2,60 @@ import {collection, doc, getDocs, setDoc} from 'firebase/firestore';
 import IChatRepositoryPort from '../../application/ports/IChatReporitoryPort';
 import ChatEntity from '../../domain/entities/ChatEntity';
 import {firebaseDB} from '../../../../config/firebase.config';
+import ParticipantEntity from '../../domain/entities/ParticipantEntity';
+import LastMessageEntity from '../../domain/entities/LastMessageEntity';
+import MessageEntity from '../../domain/entities/MessageEntity';
 
 class ChatRepositoryAdapter implements IChatRepositoryPort {
   async list(): Promise<ChatEntity[]> {
-    const docs = await getDocs(collection(firebaseDB, 'chats'));
+    const snapshot = await getDocs(collection(firebaseDB, 'chats'));
 
-    return docs.docs.map(doc => {
-      const data = doc.data();
-
-      return data as ChatEntity;
-    });
+    return snapshot.docs.map(docData =>
+      ChatEntity.fromFirestore(docData.data()),
+    );
   }
 
-  async create(participants: string[]): Promise<ChatEntity> {
+  async createChat(participants: ParticipantEntity[]): Promise<ChatEntity> {
     const id = `${Date.now()}`;
 
-    const newChat = {
-      _id: id,
+    const lastMessageDate = new Date().toISOString();
+    const lastMessageEntity = new LastMessageEntity('', lastMessageDate, '');
+    const participantIds = participants.map(participant => participant._id);
+    const chatEntity = new ChatEntity(
+      id,
       participants,
-      lastMessage: '',
-      lastMessageDate: '',
-      lastMessageSender: '',
-      unreadMessages: 0,
-    };
+      participantIds,
+      lastMessageEntity,
+      0,
+    );
 
-    setDoc(doc(firebaseDB, 'chats', id), newChat);
+    await setDoc(doc(firebaseDB, 'chats', id), chatEntity.toFirestore());
 
-    return new ChatEntity(id, participants, '', '', '');
+    return chatEntity;
+  }
+
+  async createMessage(
+    chatId: string,
+    message: MessageEntity,
+  ): Promise<MessageEntity> {
+    message.time = new Date().toISOString();
+    await setDoc(
+      doc(firebaseDB, 'chats', chatId, 'messages', `${Date.now()}`),
+      message.toFirestore(),
+    );
+
+    return message;
+  }
+
+  async updateLastMessage(
+    chatId: string,
+    lastMessage: LastMessageEntity,
+  ): Promise<void> {
+    await setDoc(
+      doc(firebaseDB, 'chats', chatId),
+      {lastMessage: lastMessage.toFirestore()},
+      {merge: true},
+    );
   }
 }
 

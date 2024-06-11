@@ -27,6 +27,8 @@
 #import "react/renderer/components/safeareacontext/States.h"
 #import "rnasyncstorage/rnasyncstorage.h"
 #import "rnasyncstorageJSI.h"
+#import "RNImagePickerSpec/RNImagePickerSpec.h"
+#import "RNImagePickerSpecJSI.h"
 #import "rnscreens/rnscreens.h"
 #import "rnscreensJSI.h"
 #import "RNVectorIconsSpec/RNVectorIconsSpec.h"

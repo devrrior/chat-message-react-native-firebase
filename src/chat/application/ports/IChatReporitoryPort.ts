@@ -1,7 +1,15 @@
 import ChatEntity from '../../domain/entities/ChatEntity';
+import LastMessageEntity from '../../domain/entities/LastMessageEntity';
+import MessageEntity from '../../domain/entities/MessageEntity';
+import ParticipantEntity from '../../domain/entities/ParticipantEntity';
 
 interface IChatRepositoryPort {
-  create(participants: string[]): Promise<ChatEntity>;
+  createChat(participants: ParticipantEntity[]): Promise<ChatEntity>;
+  createMessage(chatId: string, message: MessageEntity): Promise<MessageEntity>;
+  updateLastMessage(
+    chatId: string,
+    lastMessage: LastMessageEntity,
+  ): Promise<void>;
   list(): Promise<ChatEntity[]>;
 }
 

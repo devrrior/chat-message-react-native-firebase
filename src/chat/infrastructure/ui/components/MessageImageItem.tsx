@@ -1,17 +1,17 @@
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, Image} from 'react-native';
 
-type MessageTextItem = {
+type MessageImageProps = {
   message: string;
   time: string;
   isRead?: boolean;
   isSender?: boolean;
 };
 
-const MessageTextItem = ({message, time, isSender}: MessageTextItem) => {
+const MessageImageItem = ({message, time, isSender}: MessageImageProps) => {
   return (
     <View style={[styles.container, isSender && styles.senderContainer]}>
       <View style={styles.messageBox}>
-        <Text style={styles.message}>{message}</Text>
+        <Image source={{uri: message}} style={styles.imageMessage} />
       </View>
       <View style={styles.timeContainer}>
         <Text style={styles.time}>{time}</Text>
@@ -38,9 +38,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#ECEAEA',
   },
-  message: {
-    fontSize: 16,
-    color: '#1E1E1E',
+  imageMessage: {
+    width: 200,
+    height: 200,
   },
   timeContainer: {
     marginLeft: 10,
@@ -56,4 +56,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MessageTextItem;
+export default MessageImageItem;

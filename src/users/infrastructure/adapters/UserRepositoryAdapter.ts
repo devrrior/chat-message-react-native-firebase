@@ -17,24 +17,9 @@ class UserRepositoryAdapter implements IUserRepositoryPort {
         user.password,
       );
 
-      const userDoc = await getDoc(
-        doc(firebaseDB, 'users', userCredentials.user.uid),
-      );
+      const userEntity = await this.findById(userCredentials.user.uid);
 
-      if (!userDoc.exists()) {
-        throw new Error('User not found');
-      }
-
-      const userData = userDoc.data();
-
-      return new UserEntity(
-        userCredentials.user.uid,
-        userData.firstName,
-        userData.lastName,
-        userData.email,
-        '',
-        userData.providerData,
-      );
+      return userEntity;
     } catch (error) {
       return null;
     }
@@ -69,13 +54,32 @@ class UserRepositoryAdapter implements IUserRepositoryPort {
   }
 
   async list(): Promise<UserEntity[]> {
-    const userDocs = await getDocs(collection(firebaseDB, 'users'));
+    const snapshots = await getDocs(collection(firebaseDB, 'users'));
 
-    return userDocs.docs.map(doc => {
-      const data = doc.data();
+    return snapshots.docs.map(snapshot => {
+      const data = snapshot.data();
 
       return data as UserEntity;
     });
+  }
+
+  async findById(id: string): Promise<UserEntity | null> {
+    const userDoc = await getDoc(doc(firebaseDB, 'users', id));
+
+    if (!userDoc.exists()) {
+      return null;
+    }
+
+    const userData = userDoc.data();
+
+    return new UserEntity(
+      userDoc.id,
+      userData.firstName,
+      userData.lastName,
+      userData.email,
+      '',
+      userData.providerData,
+    );
   }
 }
 
