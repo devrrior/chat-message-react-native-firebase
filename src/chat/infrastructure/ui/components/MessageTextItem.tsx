@@ -1,13 +1,13 @@
 import {StyleSheet, View, Text} from 'react-native';
 
-type MessageTextItem = {
+type MessageTextItemProps = {
   message: string;
   time: string;
   isRead?: boolean;
   isSender?: boolean;
 };
 
-const MessageTextItem = ({message, time, isSender}: MessageTextItem) => {
+const MessageTextItem = ({message, time, isSender}: MessageTextItemProps) => {
   return (
     <View style={[styles.container, isSender && styles.senderContainer]}>
       <View style={styles.messageBox}>

@@ -66,10 +66,7 @@ const ListChatScreen = ({navigation}: ListChatScreenRouteProp) => {
           : 'Sin mensajes aún';
       const datetime = new Date(chat.lastMessage.date);
       const datetimeFinal = `${datetime.getDate()}/${datetime.getMonth()}/${datetime.getFullYear()} ${datetime.getHours()}:${datetime.getMinutes()}`;
-      const profileImageUrl =
-        participants[0].profileImageUrl === ''
-          ? 'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg'
-          : participants[0].profileImageUrl;
+      const profileImageUrl = participants[0].profileImageUrl;
 
       return (
         <TouchableOpacity

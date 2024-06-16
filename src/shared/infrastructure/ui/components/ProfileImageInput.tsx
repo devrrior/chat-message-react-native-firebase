@@ -1,6 +1,7 @@
 import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {launchImageLibrary} from 'react-native-image-picker';
+import PlaceholderProfile from '../../../../../assets/placeholder_profile.jpg';
 
 type ProfileImageInputProps = {
   value: string;
@@ -23,13 +24,7 @@ const ProfileImageInput = ({
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
-          source={
-            value
-              ? {uri: value}
-              : {
-                  uri: 'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg',
-                }
-          }
+          source={value.length > 0 ? {uri: value} : PlaceholderProfile}
           style={styles.image}
         />
         <TouchableOpacity style={styles.iconContainer} onPress={selectImage}>

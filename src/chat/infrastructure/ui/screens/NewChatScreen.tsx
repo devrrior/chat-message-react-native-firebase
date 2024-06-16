@@ -18,10 +18,12 @@ import {
 } from '../../../../users/infrastructure/dependecies';
 import {createChatUseCase} from '../../dependecies';
 import ParticipantEntity from '../../../domain/entities/ParticipantEntity';
+import AlertLoading from '../../../../shared/infrastructure/ui/components/AlertLoading';
 
 const NewChatScreen = ({navigation}: NewChatScreenRouteProp) => {
   const [contacts, setContacts] = useState([] as UserEntity[]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAddingChat, setIsAddingChat] = useState(false);
 
   const userCredentials = firebaseAuth.currentUser;
 
@@ -59,7 +61,10 @@ const NewChatScreen = ({navigation}: NewChatScreenRouteProp) => {
         receiverUser?.profileImageUrl as string,
       ),
     ];
+
+    setIsAddingChat(true);
     await createChatUseCase.execute(collaborators);
+    setIsAddingChat(false);
 
     navigation.navigate('ListChatScreen');
   };
@@ -90,6 +95,7 @@ const NewChatScreen = ({navigation}: NewChatScreenRouteProp) => {
         leftIconColor="#1E68D7"
         onLeftPress={() => navigation.goBack()}
       />
+      {isAddingChat && <AlertLoading message="Creando chat..." />}
       {!isLoading && (
         <ScrollView style={styles.contacts}>{renderContacts()}</ScrollView>
       )}

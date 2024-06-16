@@ -1,10 +1,12 @@
 import {collection, doc, getDocs, setDoc} from 'firebase/firestore';
 import IChatRepositoryPort from '../../application/ports/IChatReporitoryPort';
 import ChatEntity from '../../domain/entities/ChatEntity';
-import {firebaseDB} from '../../../../config/firebase.config';
+import {firebaseDB, firebaseStorage} from '../../../../config/firebase.config';
 import ParticipantEntity from '../../domain/entities/ParticipantEntity';
 import LastMessageEntity from '../../domain/entities/LastMessageEntity';
 import MessageEntity from '../../domain/entities/MessageEntity';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
+import {Platform} from 'react-native';
 
 class ChatRepositoryAdapter implements IChatRepositoryPort {
   async list(): Promise<ChatEntity[]> {
@@ -39,6 +41,7 @@ class ChatRepositoryAdapter implements IChatRepositoryPort {
     message: MessageEntity,
   ): Promise<MessageEntity> {
     message.time = new Date().toISOString();
+
     await setDoc(
       doc(firebaseDB, 'chats', chatId, 'messages', `${Date.now()}`),
       message.toFirestore(),
@@ -56,6 +59,28 @@ class ChatRepositoryAdapter implements IChatRepositoryPort {
       {lastMessage: lastMessage.toFirestore()},
       {merge: true},
     );
+  }
+
+  async uploadImage(imageUri: string, type: string): Promise<string> {
+    try {
+      const dateStr = new Date().toISOString();
+      const filename =
+        dateStr + imageUri.substring(imageUri.lastIndexOf('/') + 1);
+      // replace %20 with - in filename
+      const filenameFinal = filename.replace(/%20/g, '-');
+      const storageRef = ref(firebaseStorage, `${type}/${filenameFinal}`);
+      const uploadUri =
+        Platform.OS === 'ios' ? imageUri.replace('file://', '') : imageUri;
+
+      const blob = await fetch(uploadUri).then(response => response.blob());
+
+      const snapshot = await uploadBytes(storageRef, blob);
+      const url = await getDownloadURL(snapshot.ref);
+
+      return url;
+    } catch (error) {
+      throw new Error('Error uploading image');
+    }
   }
 }
 

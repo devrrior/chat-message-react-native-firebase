@@ -1,24 +1,23 @@
 import {useLayoutEffect, useRef, useState} from 'react';
-import {StyleSheet, ScrollView, Platform} from 'react-native';
+import {StyleSheet, ScrollView} from 'react-native';
 import ChatAppBar from '../components/ChatAppBar';
-import MessageTextItem from '../components/MessageItem';
 import MessageInput from '../components/MessageInput';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ChatScreenRouteProp} from '../types/chatScreensRouteProps';
 import {
   createMessageUseCase,
   updateLastMessageUseCase,
+  uploadImageUseCase,
 } from '../../dependecies';
 import MessageEntity from '../../../domain/entities/MessageEntity';
-import {
-  firebaseAuth,
-  firebaseDB,
-  firebaseStorage,
-} from '../../../../../config/firebase.config';
+import {firebaseAuth, firebaseDB} from '../../../../../config/firebase.config';
 import LastMessageEntity from '../../../domain/entities/LastMessageEntity';
 import {collection, onSnapshot, orderBy, query} from 'firebase/firestore';
-import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 import MessageImageItem from '../components/MessageImageItem';
+import MessageVideoItem from '../components/MessageVideoItem';
+import MessageType from '../../../domain/types/MessageType';
+import MessageAudioItem from '../components/MessageAudioItem';
+import MessageTextItem from '../components/MessageTextItem';
 
 const ChatScreen = ({navigation, route}: ChatScreenRouteProp) => {
   const {chatId, name, profileImageUrl} = route.params;
@@ -64,27 +63,22 @@ const ChatScreen = ({navigation, route}: ChatScreenRouteProp) => {
     await updateLastMessageUseCase.execute(chatId, lastMessage);
   };
 
-  const handleSendImage = async (imageUri: string) => {
-    if (!imageUri) {
+  const handleSendFile = async (fileUri: string, messageType: MessageType) => {
+    if (!fileUri) {
       return;
     }
+    console.log(fileUri);
 
-    const filename = imageUri.substring(imageUri.lastIndexOf('/') + 1);
-    const storageRef = ref(firebaseStorage, `images/${filename}`);
-    const uploadUri =
-      Platform.OS === 'ios' ? imageUri.replace('file://', '') : imageUri;
-
-    const blob = await fetch(uploadUri).then(response => response.blob());
-
-    const snapshot = await uploadBytes(storageRef, blob);
-    const url = await getDownloadURL(snapshot.ref);
+    const url = await uploadImageUseCase.execute(fileUri, messageType);
+    console.log(url);
 
     const messageEntity = new MessageEntity(
       url,
-      'image',
-      new Date().toISOString(),
+      messageType,
+      '',
       userCredentials?.uid as string,
     );
+    console.log(messageEntity);
 
     await createMessageUseCase.execute(chatId, messageEntity);
   };
@@ -101,7 +95,26 @@ const ChatScreen = ({navigation, route}: ChatScreenRouteProp) => {
             isSender={msg.authorId === userCredentials?.uid}
           />
         );
+      } else if (msg.type === 'video') {
+        return (
+          <MessageVideoItem
+            key={index}
+            message={msg.message}
+            time={`${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`}
+            isSender={msg.authorId === userCredentials?.uid}
+          />
+        );
+      } else if (msg.type === 'audio') {
+        return (
+          <MessageAudioItem
+            key={index}
+            audioUri={msg.message}
+            time={`${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`}
+            isSender={msg.authorId === userCredentials?.uid}
+          />
+        );
       }
+
       return (
         <MessageTextItem
           key={index}
@@ -128,7 +141,7 @@ const ChatScreen = ({navigation, route}: ChatScreenRouteProp) => {
         }}>
         {renderMessages()}
       </ScrollView>
-      <MessageInput onSendText={handleSendText} onSendImage={handleSendImage} />
+      <MessageInput onSendText={handleSendText} onSendFile={handleSendFile} />
     </SafeAreaView>
   );
 };

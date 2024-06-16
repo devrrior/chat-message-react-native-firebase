@@ -1,5 +1,12 @@
 import {useEffect, useState} from 'react';
-import {Platform, StyleSheet, Text} from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import InputField from '../../../../shared/infrastructure/ui/components/InputField';
 import Button from '../../../../shared/infrastructure/ui/components/Button';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -13,8 +20,7 @@ import {
 import AppBar from '../../../../shared/infrastructure/ui/components/AppBar';
 import {SignUpScreenRouteProp} from '../types/userScreeensRouteProps';
 import ProfileImageInput from '../../../../shared/infrastructure/ui/components/ProfileImageInput';
-import {firebaseStorage} from '../../../../../config/firebase.config';
-import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
+import {uploadImageUseCase} from '../../../../chat/infrastructure/dependecies';
 
 const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
   const [errors, setErrors] = useState([] as string[]);
@@ -52,6 +58,9 @@ const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
     if (values.password !== values.confirmPassword) {
       validationErrors.push('Las contraseñas no coinciden');
     }
+    if (values.profileImageUri === '') {
+      validationErrors.push('Debes seleccionar una imagen de perfil');
+    }
 
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
@@ -59,20 +68,9 @@ const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
       return;
     }
 
-    // uploading image
-    const filename = values.profileImageUri.substring(
-      values.profileImageUri.lastIndexOf('/') + 1,
+    const imageProfileUrl = await uploadImageUseCase.execute(
+      values.profileImageUri,
     );
-    const storageRef = ref(firebaseStorage, `images/${filename}`);
-    const uploadUri =
-      Platform.OS === 'ios'
-        ? values.profileImageUri.replace('file://', '')
-        : values.profileImageUri;
-
-    const blob = await fetch(uploadUri).then(response => response.blob());
-
-    const snapshot = await uploadBytes(storageRef, blob);
-    const imageProfileUrl = await getDownloadURL(snapshot.ref);
 
     registerUseCase.execute(
       values.firstName,
@@ -108,45 +106,59 @@ const SignUpScreen = ({navigation}: SignUpScreenRouteProp) => {
         value={values.profileImageUri}
         setValue={uri => setValues({...values, profileImageUri: uri})}
       />
-      <InputField
-        value={values.firstName}
-        handleChange={value => setValues({...values, firstName: value})}
-        width={'90%'}
-        placeholder="Nombre"
-      />
-      <InputField
-        value={values.lastName}
-        handleChange={value => setValues({...values, lastName: value})}
-        width={'90%'}
-        placeholder="Apellido"
-      />
-      <InputField
-        value={values.email}
-        handleChange={value => setValues({...values, email: value})}
-        width={'90%'}
-        placeholder="Correo electronico"
-      />
-      <InputField
-        value={values.password}
-        handleChange={value => setValues({...values, password: value})}
-        width={'90%'}
-        placeholder="Contraseña"
-        secureTextEntry={true}
-      />
-      <InputField
-        value={values.confirmPassword}
-        handleChange={value => setValues({...values, confirmPassword: value})}
-        width={'90%'}
-        placeholder="Confirmar contraseña"
-        secureTextEntry={true}
-      />
-      <Button
-        title="Registrarse"
-        width={'90%'}
-        handlePress={handleSubmit}
-        isDisabled={isSubmitting}
-      />
-      {renderErrors()}
+      <KeyboardAvoidingView
+        style={{width: '100%'}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView>
+          <View
+            style={{
+              width: '100%',
+              alignItems: 'center',
+            }}>
+            <InputField
+              value={values.firstName}
+              handleChange={value => setValues({...values, firstName: value})}
+              width={'90%'}
+              placeholder="Nombre"
+            />
+            <InputField
+              value={values.lastName}
+              handleChange={value => setValues({...values, lastName: value})}
+              width={'90%'}
+              placeholder="Apellido"
+            />
+            <InputField
+              value={values.email}
+              handleChange={value => setValues({...values, email: value})}
+              width={'90%'}
+              placeholder="Correo electronico"
+            />
+            <InputField
+              value={values.password}
+              handleChange={value => setValues({...values, password: value})}
+              width={'90%'}
+              placeholder="Contraseña"
+              secureTextEntry={true}
+            />
+            <InputField
+              value={values.confirmPassword}
+              handleChange={value =>
+                setValues({...values, confirmPassword: value})
+              }
+              width={'90%'}
+              placeholder="Confirmar contraseña"
+              secureTextEntry={true}
+            />
+            <Button
+              title="Registrarse"
+              width={'90%'}
+              handlePress={handleSubmit}
+              isDisabled={isSubmitting}
+            />
+            {renderErrors()}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

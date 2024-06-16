@@ -1,3 +1,3 @@
-type MessageType = 'text' | 'image';
+type MessageType = 'text' | 'image' | 'video' | 'audio';
 
 export default MessageType;

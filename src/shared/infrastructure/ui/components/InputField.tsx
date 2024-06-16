@@ -23,11 +23,15 @@ const InputField = ({
       secureTextEntry={secureTextEntry}
       value={value}
       onChangeText={handleChange}
+      selectionColor={'#ffffff'}
     />
   );
 };
 
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   input: {
     height: 45,
     borderColor: '#CCCCCC',

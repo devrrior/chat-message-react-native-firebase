@@ -11,6 +11,7 @@ interface IChatRepositoryPort {
     lastMessage: LastMessageEntity,
   ): Promise<void>;
   list(): Promise<ChatEntity[]>;
+  uploadImage(imageUri: string, type: string): Promise<string>;
 }
 
 export default IChatRepositoryPort;

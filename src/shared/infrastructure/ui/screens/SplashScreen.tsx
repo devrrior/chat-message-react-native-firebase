@@ -21,14 +21,7 @@ const SplashScreen = ({navigation}: SplashScreenRouteProps) => {
         const userDoc = await getDoc(doc(firebaseDB, 'users', user.uid));
 
         if (userDoc.exists()) {
-          const userEntity = new UserEntity(
-            userDoc.get('_id'),
-            userDoc.get('firstName'),
-            userDoc.get('lastName'),
-            userDoc.get('email'),
-            userDoc.get('avatar'),
-            userDoc.get('providerData'),
-          );
+          const userEntity = UserEntity.fromFirebase(userDoc.data());
 
           dispatch({type: AuthActionTypes.LOGIN, payload: userEntity});
           navigation.navigate('ListChatScreen');
